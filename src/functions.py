@@ -81,7 +81,7 @@ def preprocessing_pipeline(numeric_features, categorical_features):
 
     return preprocessor
 
-#Functions for Bootstrap
+#Function for Bootstrap
 import random
 
 def bootstrap_apply(y_pred, y_val, n_resamples=1000, seed=42):
@@ -112,5 +112,49 @@ def bootstrap_apply(y_pred, y_val, n_resamples=1000, seed=42):
         stats.append({'RMSE':RMSE, 'MAE':MAE, 'R2':R2, 'Pearson_r':r})
         
     return pd.DataFrame(stats, columns=['RMSE', 'MAE', 'R2', 'Pearson_r'])
+
+
+#Function for stability selection method for feature selection
+
+from scipy import stats
+
+def stability_selection(X_train, y_train, n_subsamples=50, sample_size=0.8, top=200, seed=42):
+    np.random.seed(seed) #set the starting point
+    n = len(X_train)
+    subsample_size = int(n* sample_size)
+
+    #Initialize an empty list to store the 200 top features
+    top200_features = []
+
+    for i in range(n_subsamples):
+
+        #Pick random indices without replacement to generate the subsample
+        idx = np.random.choice(np.arange(len(X_train)), size=subsample_size, replace=False)
+        X_subsample = X_train.iloc[idx]
+        y_subsample = y_train.iloc[idx]
+
+        #Calculate Spearman correlation(all CpG with age)
+        corr_list = [] #Initialize an empty list to store the correlation results for the specific subsample
+
+        for col_name in X_subsample.columns:
+            col_spearman , pvalue = stats.spearmanr(X_subsample[col_name], y_subsample)
+
+            corr_list.append(col_spearman)
+
+        #Convert to Pandas
+        series_corr_list = pd.Series(corr_list, index=X_subsample.columns)
+
+        #Take the absolute values
+        abs_corr_list = series_corr_list.abs()
+
+        #Sort the values to take the top200
+        abs_corr_list_sorted = abs_corr_list.sort_values(ascending=False)
+        top200 = abs_corr_list_sorted.head(top).index.tolist()
+
+        top200_features.extend(top200) #this list in the end will have all the 200 top200 features from each subsample (total 10,000)
+
+    return top200_features
+
+
 
 
