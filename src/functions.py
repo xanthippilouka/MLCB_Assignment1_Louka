@@ -41,7 +41,7 @@ from scipy.stats import pearsonr
 #Function for the Split of the data based on age 
 def split_data(data, target='age'):
     df = data.copy()
-    #Stratify by age, develope age-groups
+    #Stratify by age, develope age-groups as some age values are unique is the dataset
     df['age_group'] = pd.qcut(df[target], q=4, labels=False)
     
     #Split the data
