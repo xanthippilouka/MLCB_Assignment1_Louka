@@ -154,13 +154,3 @@ def stability_selection(X_train, y_train, n_subsamples=50, sample_size=0.8, top=
         top200_features.extend(top200) #this list in the end will have all the 200 top200 features from each subsample (total 10,000)
 
     return top200_features
-
-
-
-
-
-
-
-
-
-
