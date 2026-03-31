@@ -36,6 +36,8 @@ from sklearn.metrics import (
     ConfusionMatrixDisplay)
 
 from scipy.stats import pearsonr
+import random
+from scipy import stats
 
 
 #Function for the Split of the data based on age 
@@ -82,8 +84,6 @@ def preprocessing_pipeline(numeric_features, categorical_features):
     return preprocessor
 
 #Function for Bootstrap
-import random
-
 def bootstrap_apply(y_pred, y_val, n_resamples=1000, seed=42):
     np.random.seed(seed) #starting point
     resamples = n_resamples
@@ -115,9 +115,6 @@ def bootstrap_apply(y_pred, y_val, n_resamples=1000, seed=42):
 
 
 #Function for stability selection method for feature selection
-
-from scipy import stats
-
 def stability_selection(X_train, y_train, n_subsamples=50, sample_size=0.8, top=200, seed=42):
     np.random.seed(seed) #set the starting point
     n = len(X_train)
